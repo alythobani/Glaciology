@@ -36,7 +36,7 @@ parameters.sensor1 = 'S15P83';
 parameters.sensor2 = 'S14P18';
 parameters.p_w_sensor = parameters.sensor1; %or sensor2, or 'both'
 
-parameters.n_lambda = 3; %number of parameters in lambda
+parameters.n_lambda = 3; %number of parameters we want to solve for
 
 parameters.h_r.index = false; %h_r = lambda(1)
 parameters.h_r.in_lambda = ...
