@@ -40,7 +40,7 @@ parametersarray(1).h_r.index = false; %h_r = lambda(1)
 parametersarray(1).h_r.in_lambda = ...
     false; %h_r is not a parameter (in lambda) we seek to optimize
 parametersarray(1).h_r.value = (6.1344e-19)*(4e5)^3/0.1;
-parametersarray(1).h_r.expectedvalue = (6.1344e-19)*(2e5)^3/0.1; %lambda_0(1)
+parametersarray(1).h_r.expectedvalue = (6.1344e-19)*(4e5)^3/0.1; %lambda_0(1)
 parametersarray(1).h_r.expectedvalueweight = 0; %sigma_1 
 
 parametersarray(1).logk.index = 1; %logk = lambda(2)

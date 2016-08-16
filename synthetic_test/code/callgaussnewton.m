@@ -3,12 +3,26 @@ function cost = callgaussnewton(  )
 % after gaussnewton has converged.
 
 %BEFORE RUNNING: execute the commands:
-%   switchesstruct1 = load('testCase.mat');
-%   pressurestruct1 = load('Interpolated data 2015 (2).mat');
-%   velocity1 = load( ... ); <- import u(t) time series
+%   examplestruct1 = load('example1.mat');
+%   examplestruct2 = load('example2.mat');
+%   etc.
+
+switchesarray(1).switchingevents = examplestruct1.data_struct.tswitch;
+time1 = examplestruct1.data_struct.time;
+pressurearray(1).pressure1 = examplestruct1.data_struct.pressure_sensor1;
+pressurearray(1).pressure2 = examplestruct1.data_struct.pressure_sensor2;
+thickness1 = examplestruct1.data_struct.thickness;
+velocity1 = examplestruct1.data_struct.velocity;
+
+switchesarray(2).switchingevents = examplestruct2.data_struct.tswitch;
+time2 = examplestruct2.data_struct.time;
+pressurearray(2).pressure1 = examplestruct2.data_struct.pressure_sensor1;
+pressurearray(2).pressure2 = examplestruct2.data_struct.pressure_sensor2;
+thickness2 = examplestruct2.data_struct.thickness;
+velocity2 = examplestruct2.data_struct.velocity;
 
 %{
-parameters is an array of structures, each of which has the following fields:
+parametersarray is an array of structures, each of which has the following fields:
     -> n_lambda: number of parameters in the parameter vector lambda (i.e, 
         the number of parameters we wish to solve for)
     -> lambda_k (for k = 1 to 4): a structure that has fields:
@@ -34,13 +48,13 @@ parametersarray(1).sensor2 = 'S14P18';
 % which sensor's pressure data will we use (or will we use both somehow?)
 parametersarray(1).p_w_sensor = parametersarray(1).sensor1; %or sensor2, or 'both'
 
-parametersarray(1).n_lambda = 3; %number of parameters we want to solve for
+parametersarray(1).n_lambda = 3; %number of parameters (in lambda) we want to solve for
 
 parametersarray(1).h_r.index = false; %h_r = lambda(1)
 parametersarray(1).h_r.in_lambda = ...
     false; %h_r is not a parameter (in lambda) we seek to optimize
 parametersarray(1).h_r.value = (6.1344e-19)*(4e5)^3/0.1;
-parametersarray(1).h_r.expectedvalue = (6.1344e-19)*(2e5)^3/0.1; %lambda_0(1)
+parametersarray(1).h_r.expectedvalue = (6.1344e-19)*(4e5)^3/0.1; %lambda_0(1)
 parametersarray(1).h_r.expectedvalueweight = 0; %sigma_1 
 
 parametersarray(1).logk.index = 1; %logk = lambda(2)
@@ -52,7 +66,7 @@ parametersarray(1).p_ice.index = 2; %p_ice = lambda(3)
 parametersarray(1).p_ice.in_lambda = ...
     true; %p_ice is a parameter (in lambda) we seek to optimize
 parametersarray(1).p_ice.expectedvalue = ...
-    916.7*9.80665*pressurestruct1.interp_data.(parametersarray(1).sensor1).position{1,1}.thickness;
+    916.7*9.80665*thickness1;
 % ^ lambda_0(3) = ice overburden pressure = (density of ice)*(acceleration
 %    due to gravity)*(ice thickness)
 parametersarray(1).p_ice.expectedvalueweight = .5; %sigma_3
@@ -62,18 +76,12 @@ parametersarray(1).n_G.in_lambda = true; %n_G is a parameter (in lambda) we seek
 parametersarray(1).n_G.expectedvalue = 3; %lambda_0(4) 
 parametersarray(1).n_G.expectedvalueweight = .5; %sigma_4 
 
-% only use switching times 1-7 for this test case
-switchesstruct1.(parametersarray(1).sensor1).(parametersarray(1).sensor2).times = ...
-    switchesstruct1.(parametersarray(1).sensor1).(parametersarray(1).sensor2).times(1:7);
+%number of switching events
+parametersarray(1).n_SE = length(switchesarray(1).switchingevents);
 
-switchingevents1 = ...
-    switchesstruct1.(parametersarray(1).sensor1).(parametersarray(1).sensor2).times;
+parametersarray(1).tspan = [time1(1), time1(end)];
 
-parametersarray(1).n_SE = length(switchingevents1); %number of switching events
-
-parametersarray(1).tspan = [min(switchingevents1) - 2, max(switchingevents1) + 2];
-
-cost = gaussnewton(parametersarray, switchesarray, pressurearray);
+cost = gaussnewton(parametersarray, switchesarray, pressurearray, length(parametersarray));
 
 
 
