@@ -1,4 +1,5 @@
-function cost = gaussnewton(parametersarray, switchesarray, pressurearray, n)
+function cost = gaussnewton(parametersarray, switchesarray, pressurearray, ...
+    velocityarray, n)
 
 %{
 This is the implementation of the Gauss-Newton method, which we are using
@@ -32,11 +33,14 @@ INPUTS
         -> switchingevents: array of switching events
 -pressurearray: array of pressure structures, one for each pair of boreholes
     -each pressure structure has the fields:
+        -> time: vector of times to go along with pressures and velocities
         -> pressure1: pressure in the first borehole (sensor1)
         -> pressure2: pressure in the second borehole (sensor2)
 -n: number of pairs of boreholes being used
 %}
-
+    
+cost = 0;
+    
 for i = 1:n
     lambda_guess(i).vector = [];
     if (parametersarray(i).h_r.in_lambda)
@@ -63,7 +67,9 @@ for i = 1:n
     %retrieve values of h, h_h0 and h_lambda interpolated at switching events
     [h_SE(i).vector, h_h0_SE(i).vector, h_lambda_SE(i).vector] = ...
         interpolateSEvalues(Beta_s, parametersarray(i), ...
-        switchesarray(i), pressurearray);
+        switchesarray(i), pressurearray(i), velocityarray(i).velocity);
+    
+    c = calculatecostfunction(Beta_0, h_SE, parameters); % C(Beta_0)
     
 end
 

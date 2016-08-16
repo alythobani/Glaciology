@@ -8,18 +8,18 @@ function cost = callgaussnewton(  )
 %   etc.
 
 switchesarray(1).switchingevents = examplestruct1.data_struct.tswitch;
-time1 = examplestruct1.data_struct.time;
+pressurearray(1).time = examplestruct1.data_struct.time;
 pressurearray(1).pressure1 = examplestruct1.data_struct.pressure_sensor1;
 pressurearray(1).pressure2 = examplestruct1.data_struct.pressure_sensor2;
 thickness1 = examplestruct1.data_struct.thickness;
-velocity1 = examplestruct1.data_struct.velocity;
+velocityarray(1).velocity = examplestruct1.data_struct.velocity;
 
 switchesarray(2).switchingevents = examplestruct2.data_struct.tswitch;
 time2 = examplestruct2.data_struct.time;
 pressurearray(2).pressure1 = examplestruct2.data_struct.pressure_sensor1;
 pressurearray(2).pressure2 = examplestruct2.data_struct.pressure_sensor2;
 thickness2 = examplestruct2.data_struct.thickness;
-velocity2 = examplestruct2.data_struct.velocity;
+velocityarray(2).velocity = examplestruct2.data_struct.velocity;
 
 %{
 parametersarray is an array of structures, each of which has the following fields:
@@ -42,8 +42,8 @@ parametersarray is an array of structures, each of which has the following field
     
 %}
 
-parametersarray(1).sensor1 = 'S15P83';
-parametersarray(1).sensor2 = 'S14P18';
+parametersarray(1).sensor1 = 1; %will normally be something like 'S15P83'
+parametersarray(1).sensor2 = 2; %will normally be something like 'S14P18'
 
 % which sensor's pressure data will we use (or will we use both somehow?)
 parametersarray(1).p_w_sensor = parametersarray(1).sensor1; %or sensor2, or 'both'
@@ -79,9 +79,10 @@ parametersarray(1).n_G.expectedvalueweight = .5; %sigma_4
 %number of switching events
 parametersarray(1).n_SE = length(switchesarray(1).switchingevents);
 
-parametersarray(1).tspan = [time1(1), time1(end)];
+parametersarray(1).tspan = [pressurearray(1).time(1), pressurearray(1).time(end)];
 
-cost = gaussnewton(parametersarray, switchesarray, pressurearray, length(parametersarray));
+cost = gaussnewton(parametersarray, switchesarray, pressurearray, ...
+    velocityarray, length(parametersarray));
 
 
 
