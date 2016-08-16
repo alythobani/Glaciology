@@ -1,0 +1,27 @@
+Each .mat file contains a data structure data_struct that contains the basic data you would also have from the processed field measurements, only that the data is created synthetically here using the sheet thickness evolution equation
+
+dh/dt = u - exp(logk)*h*(p_i-p_w)^n
+
+h(initial time) = h_0, and switching times are times at which h = h_c
+
+1) a field 'tswitch' containing switching times. Note that some switching times may be missing (deliberately!)
+2) a field 'time'. These are the time stamps corresponding to the pressure and ice velocity data
+3) a field pressure_sensor1, with water pressure measurements from one 'borehole'
+4) a field pressure_sensor2, with water pressure measurements from the other 'borehole'
+5) a field velocity, with velocity 'measurements'
+6) a field thickness with an estimated ice thickness. This may not be accurate.
+
+Note that in each case either one of pressure_sensor1 and pressure_sensor2 will correspond to p_w (the other will differ during the 'switched off' times), or the arithmetic mean of pressure_sensor1 and pressure_sensor2 will correspond to p_w. You do not know a priori which case applies. Also, some noise may have been added to the pressure 'data'
+
+The examples are designed so you can solve for parameter choices simultaneously using more than one data file. The pressure and velocity data for each file is generally unique, but some model parameters may be the same.
+
+In particular:
+
+example1 and example2 use the same logk, n, h0 values. p_i and hc differ. (Note that having the same h0 is not realistic in practice)
+
+example2 and example3 share p_i, n but logk, h_0 and h_c differ. (In practice, we would probably generally assume that logk is the same)
+
+example3 and example4 share logk and n but p_i, h_0 and h_c differ (This is the most realistic case --- logk and n are the most obvious "universal" parameters. h_c may be a universal parameter, too, but p_i and h_0 are definitely specific to borehole pairs)
+
+example4 and example5 share p_i, logk and n but h_0 and h_c differ
+
